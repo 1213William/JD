@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from scrapy.selector import Selector
-
+from jd.items import JdItem
 """
 1、第一步就是要找打当前的所有的页面的链接
 2、，然后才是根据这个链接来进行分析
@@ -45,11 +45,13 @@ class SpSpider(scrapy.Spider):
             yield scrapy.Request(cmp_url, callback=self.parse_shop, dont_filter=True)
 
     def parse_shop(self, response):
+        item = JdItem()
         sel = Selector(response)
         shop_title = sel.xpath('//div[@class="J-hove-wrap EDropdown fr"]/div/div/a/text()').extract_first()
         shop_url = 'https:' + sel.xpath('//div[@class="J-hove-wrap EDropdown fr"]/div/div/a/@href').extract_first()
-
-        print(shop_title,  shop_url)
+        item['title'] = shop_title
+        item['url'] = shop_url
+        yield item
 
 
         # print(all_page.extract())
